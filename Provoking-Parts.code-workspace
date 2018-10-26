@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "server"
+		},
+		{
+			"path": "future_client"
+		},
+		{
+			"path": "client"
+		}
+	],
+	"settings": {
+		"dart.sdkPath": "/usr/local/Cellar/dart/1.24.3"
+	}
+}
