@@ -13,4 +13,4 @@ void customAlert(Alert type, String msg) => alerts.children.insert(0, DivElement
   ..children.add(new ImageElement(src: '../closewindow.png')
     ..className = "closeWindow"
     ..onClick
-        .listen((MouseEvent e) => (e.target as ImageElement).parent.remove())));
+        .listen((e) => (e.target as ImageElement).parent.remove())));
