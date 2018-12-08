@@ -1,10 +1,13 @@
-import 'dart:async';
 import 'dart:html';
 import 'custom_alert.dart';
 
-const serverUri = "localhost:6868";
+const serverUri = "";
 WebSocket ws;
-Map<String, dynamic> session = {};
+Map<String, dynamic> session = {
+  "partsList": {
+    
+  }
+};
 
 void initWebsocket(String user_token) =>
   ws = WebSocket("ws://$serverUri/ws")

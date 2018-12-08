@@ -1,7 +1,7 @@
 import 'dart:html';
 
 class CustomDropdown {
-  DivElement dropdown;
+  DivElement elem;
   DivElement optionsElem;
   DivElement selectedElem;
   bool open = true;
@@ -21,7 +21,7 @@ class CustomDropdown {
       ..className = "dropdownOptions"
       ..children = (options..[selected].style.display = "none")
       ..style.display = "none";
-    dropdown = DivElement()
+    elem = DivElement()
       ..className = "customDropdown"
       ..children = [selectedElem, optionsElem]
       ..onClick.listen((_) {

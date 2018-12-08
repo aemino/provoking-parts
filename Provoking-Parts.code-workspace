@@ -4,9 +4,6 @@
 			"path": "server"
 		},
 		{
-			"path": "future_client"
-		},
-		{
 			"path": "client"
 		}
 	],
