@@ -86,19 +86,16 @@ img {
   margin-right: 10px;
 }
 
-.part, .catagory {
+.part {
   border-radius: 5px;
   border-style: solid;
   border-width: 1px;
   background-color: #f0f0f0;
 }
 
-.catagory {
-  font-size: 22px;
-  height: 30px;
-  margin-top: 8px;
-  padding-top: 5px;
-  border-color: #000000;
+.part:hover, #newPart:hover {
+  background-color: #dddddd;
+  cursor: pointer;
 }
 
 .part {
@@ -120,26 +117,34 @@ img {
   cursor: pointer;
 }
 
-.partStatus {
+.part .partStatus {
   float: right;
   margin-right: 10px;
   padding-right: 3px;
   padding-left: 3px;
   padding-top: 1px;
   border-radius: 10px;
-  cursor: pointer;
 }
 
-.partStatus:hover {
-  background-color: #e0e0e0;
+.addPart {
+  float: right;
+  margin-right: 15px;
+  margin-left: 2px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  padding: 2px;
 }
 
 .statusColor {
   display: inline-block;
   width: 10px;
   height: 10px;
+  margin-left: 3px;
   border-radius: 100%;
   border-style: solid;
   border-width: 1px;
   vertical-align: 2.5%;
 }
+
+
