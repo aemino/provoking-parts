@@ -9,10 +9,12 @@ void initModalElems([DivElement modalElem, DivElement msgContainerElem]) {
   document
       .querySelector("#screenCover")
       .onClick
-      .listen((_) => modal.style.display = "none");
+      .listen((_) => closeModal());
 }
 
 void showModal(Element msg) {
   msgContainer.children.last = msg..className += " modalMessage";
   modal.style.display = "flex";
 }
+
+void closeModal() => modal.style.display = "none";
