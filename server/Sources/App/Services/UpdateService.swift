@@ -59,7 +59,7 @@ final class UpdateService: Service {
                 new: new
             )
 
-            return try publish(update).flatten(on: req).map { _ in
+            return try self.publish(update).flatten(on: req).map { _ in
                 return new ?? old!
             }
         }
