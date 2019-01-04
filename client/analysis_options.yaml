@@ -1,4 +1,6 @@
 analyzer:
   exclude: build/**
+  strong-mode:
+    implicit-casts: true
 
 include: package:style_genshu/analysis_options.yaml
