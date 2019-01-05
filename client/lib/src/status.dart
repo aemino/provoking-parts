@@ -31,7 +31,7 @@ class StatusDropdown {
 
   void selectStatus(Element elem, int id) {
     if (selected != null) selected.style.display = "";
-    selectedElem.children.first = elem.clone(true);
+    selectedElem.nodes.first = elem.clone(true);
     elem.style.display = "none";
     selected = elem;
     selectedID = id;

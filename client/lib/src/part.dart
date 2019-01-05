@@ -6,10 +6,10 @@ import 'custom_alert.dart';
 
 String discloserTriangleUrl = "../disctri";
 
-DivElement makeFullPart(Map<String, dynamic> json, [bool topLevel = false]) =>
+DivElement makeFullPart(Map<String, dynamic> json, {bool topLevel = false}) =>
     DivElement()
       ..className = "partContainer"
-      ..id = json["id"].toString()
+      ..id = "part${json["id"]}"
       ..style.paddingLeft = "${topLevel ? 0 : 20}px"
       ..children.addAll([
         makeSinglePart(json),
@@ -28,9 +28,10 @@ DivElement makeSinglePart(Map<String, dynamic> json) =>
             ? (ImageElement(src: "../part.png")..className = "partIcon")
             : (ImageElement(src: "${discloserTriangleUrl}true.png")
               ..onClick.listen((e) {
+                e.stopPropagation();
                 ImageElement disclosureTri = (e.target as ImageElement);
                 DivElement partChildren = document
-                    .querySelector("#${json["id"]}")
+                    .querySelector("#part${json["id"]}")
                     .querySelector(".partChildren");
                 bool disclosed = (partChildren.style.display == "none");
                 disclosureTri.src = "${discloserTriangleUrl}${disclosed}.png";
@@ -46,14 +47,14 @@ DivElement makeSinglePart(Map<String, dynamic> json) =>
         ImageElement(src: "plus.png", width: 20, height: 20)
           ..className = "addPart"
           ..onClick.listen((e) {
-            showModal(partEditMenu({"parentID": json["parentID"]}));
             e.stopPropagation();
+            showModal(partEditMenu({"parentID": json["parentID"]}));
           }),
         makeStatus(json["status"]),
       ]);
 
 DivElement partEditMenu([Map<String, dynamic> json]) {
-  json ??= Map()..putIfAbsent("status", () => Map());
+  json.putIfAbsent("status", () => Map());
   Update editType = json != null ? Update.patch : Update.put;
   DivElement menu = DivElement();
   StatusDropdown status = StatusDropdown(json["status"]["id"]);
@@ -113,9 +114,9 @@ DivElement partEditMenu([Map<String, dynamic> json]) {
                   "status": session["statusList"][status.selectedID],
                   "parentID": json["parentID"],
                 };
-                String apiErr = await update(editedJson, editType, Item.parts);
+                String apiErr /*= await update(editedJson, editType, Item.parts)*/;
                 if (apiErr != null) {
-                  customAlert(Alert.error, "Error while communicating with server: " + apiErr);
+                  customAlert(Alert.error, "Error while communicating with server: $apiErr");
                   loading.remove();
                   menu.children.first.style.display = "";
                   return;

@@ -91,19 +91,15 @@ img {
   border-style: solid;
   border-width: 1px;
   background-color: #f0f0f0;
-}
-
-.part:hover, #newPart:hover {
-  background-color: #dddddd;
-  cursor: pointer;
-}
-
-.part {
   font-size: 20px;
   height: 28px;
   margin-top: 3px;
   padding-top: 3px;
-  border-color: #aaaaaa;
+}
+
+.part:hover {
+  background-color: #dddddd;
+  cursor: pointer;
 }
 
 .partIcon {
@@ -134,6 +130,11 @@ img {
   border-style: solid;
   border-width: 1px;
   padding: 2px;
+  background-color: #f0f0f0;
+}
+
+.addPart:hover {
+  background-color: #ffffff;
 }
 
 .statusColor {

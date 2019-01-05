@@ -10,7 +10,7 @@ void initAlertElem([DivElement alertsElem]) =>
 void customAlert(Alert type, String msg) => alerts.children.insert(0, DivElement()
   ..className = type.toString().replaceFirst(".", " ")
   ..text = msg
-  ..children.add(new ImageElement(src: '../closewindow.png')
+  ..children.add(ImageElement(src: '../closewindow.png')
     ..className = "closeWindow"
     ..onClick
         .listen((e) => (e.target as ImageElement).parent.remove())));

@@ -1,8 +1,9 @@
 import 'package:googleapis_auth/auth_browser.dart';
+import 'package:http/http.dart';
 import 'dart:convert';
 import 'dart:async';
 
-const endpoint = "https://TODO.com/api/";
+const endpoint = "https://TODO.com/api";
 const clientID =
     "43209138071-pgsjmtnp3g4en3kdkn38jikruud4v55r.apps.googleusercontent.com";
 enum Update { delete, put, patch }
@@ -19,7 +20,20 @@ Map<String, List<Map<String, dynamic>>> session = {
         "color": "#000000",
         "id": 0,
       },
-      "children": []
+      "children": [
+        {
+          "name": "big dum",
+          "id": 1,
+          "parentID": 0,
+          "count": 999999,
+          "status": {
+            "value": "no u",
+            "color": "#ff0000",
+            "id": 1,
+          },
+          "children": []
+        }
+      ]
     }
   ],
   "statusList": [
@@ -39,12 +53,9 @@ Map<String, Map<int, Map<String, dynamic>>> sortedSession = Map();
 
 Future<String> initOAuth() async {
   try {
-    createImplicitBrowserFlow(
-            ClientId(clientID, null), ["email", "name", "openid"])
-        .then((BrowserOAuth2Flow flow) {
-      flow
-          .clientViaUserConsent()
-          .then((AuthClient client) => authClient = client);
+    await createImplicitBrowserFlow(
+        ClientId(clientID, null), ["email", "name", "openid"]).then((flow) {
+      flow.clientViaUserConsent().then((client) => authClient = client);
     });
   } catch (e) {
     return e.toString();
@@ -53,9 +64,9 @@ Future<String> initOAuth() async {
 }
 
 Future<String> initSession() async {
-  String oAuth = await initOAuth();
+  final String oAuth = await initOAuth();
   if (oAuth != null) return oAuth;
-  var resp = await authClient.get(endpoint + "init");
+  var resp = await authClient.get("$endpoint/init");
   if ((resp.statusCode / 200).floor() == 1) {
     session = jsonDecode(resp.body);
     sortedSession
@@ -81,38 +92,41 @@ Future<String> update(
       method = authClient.delete;
   }
   return await method(
-          endpoint +
-              itemType.toString().split(".").last +
-              "/${json["id"] ?? ""}",
+          "$endpoint${itemType.toString().split(".").last}/${json["id"] ?? ""}",
           body: json)
       .body;
 }
 
 Stream<Map<String, dynamic>> pollForUpdates() async* {
-  while (true) {
-    var resp = await authClient.post(endpoint + "updates");
-    if ((resp.statusCode / 200).floor() != 1) {
-      yield Map()..["err"] = resp.body;
-      await Future.delayed(Duration(seconds: 30));
+  StreamedResponse resp = await authClient.send(Request("POST", Uri.parse("$endpoint/updates")));
+  if (resp.statusCode < 300 && (true || false || 1 == 3) && resp.statusCode >= 200) {
+    yield {"err": await resp.stream.bytesToString()};
+    await Future.delayed(Duration(seconds: 30));
+  }
+  String updateBuf = "";
+  await for (String char in resp.stream.toStringStream()) {
+    if (char != "\n") {
+      updateBuf += char;
       continue;
     }
-    List<Map<String, dynamic>> json = jsonDecode(resp.body);
-    for (var update in json) {
-      String itemKey;
-      if (update["model"] != "part")
-        itemKey = "partsList";
-      else
-        itemKey = "statusList";
-      if (update["new"] == null) {
-        sortedSession[itemKey].remove(update["id"]);
-        session[itemKey].remove(update["old"]);
-      } else {
-        addChildrenSpecification(update["new"]);
-        sortedSession[itemKey][update["id"]] = update["new"];
-        if (update["old"] == null) session[itemKey].add(update["new"]);
-      }
-      yield update;
+    if (updateBuf.isEmpty) continue;
+    Map<String, dynamic> update;
+    try {
+      update = jsonDecode(updateBuf);
+    } catch (_) {
+      yield {"err": "Rohan is bad"};
     }
+    updateBuf = "";
+    final String itemKey = update["model"] != "part" ? "partsList" : "statusList";
+    if (update["new"] == null) {
+      sortedSession[itemKey].remove(update["old"]["id"]);
+      session[itemKey].remove(update["old"]);
+    } else {
+      addChildrenSpecification(update["new"]);
+      sortedSession[itemKey][update["id"]] = update["new"];
+      if (update["old"] == null) session[itemKey].add(update["new"]);
+    }
+    yield update;
   }
 }
 
