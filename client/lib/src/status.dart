@@ -14,8 +14,8 @@ class StatusDropdown {
     optionsElem = DivElement()
       ..className = "option"
       ..children.addAll(List.generate(session["statusList"].length, (i) {
-        int id = session["statusList"][i]["id"];
-        Element elem = makeStatus(session["statusList"][i]);
+        final int id = session["statusList"][i]["id"];
+        final Element elem = makeStatus(session["statusList"][i]);
         if (id == selectedID)
           selectStatus(elem, id);
         return DivElement()..children.add(elem..onClick.listen((_) => selectStatus(elem, id)));

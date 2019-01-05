@@ -1,8 +1,8 @@
 import 'dart:html';
-import 'modal.dart';
 import 'api.dart';
-import 'status.dart';
 import 'custom_alert.dart';
+import 'modal.dart';
+import 'status.dart';
 
 String discloserTriangleUrl = "../disctri";
 
@@ -19,45 +19,44 @@ DivElement makeFullPart(Map<String, dynamic> json, {bool topLevel = false}) =>
               (i) => makeFullPart(json["children"][i])))
       ]);
 
-DivElement makeSinglePart(Map<String, dynamic> json) =>
-    DivElement()
-      ..className = "part"
-      ..onClick.listen((e) => showModal(partEditMenu(json)))
-      ..children.addAll([
-        json["children"].isEmpty
-            ? (ImageElement(src: "../part.png")..className = "partIcon")
-            : (ImageElement(src: "${discloserTriangleUrl}true.png")
-              ..onClick.listen((e) {
-                e.stopPropagation();
-                ImageElement disclosureTri = (e.target as ImageElement);
-                DivElement partChildren = document
-                    .querySelector("#part${json["id"]}")
-                    .querySelector(".partChildren");
-                bool disclosed = (partChildren.style.display == "none");
-                disclosureTri.src = "${discloserTriangleUrl}${disclosed}.png";
-                partChildren.style.display = disclosed ? "block" : "none";
-              })
-              ..className = "partIcon disclosureTri"),
-        SpanElement()
-          ..className = "partName"
-          ..text = json["name"],
-        SpanElement()
-          ..className = "partCount"
-          ..text = json["count"].toString(),
-        ImageElement(src: "plus.png", width: 20, height: 20)
-          ..className = "addPart"
+DivElement makeSinglePart(Map<String, dynamic> json) => DivElement()
+  ..className = "part"
+  ..onClick.listen((e) => showModal(partEditMenu(json)))
+  ..children.addAll([
+    json["children"].isEmpty
+        ? (ImageElement(src: "../part.png")..className = "partIcon")
+        : (ImageElement(src: "${discloserTriangleUrl}true.png")
           ..onClick.listen((e) {
             e.stopPropagation();
-            showModal(partEditMenu({"parentID": json["parentID"]}));
-          }),
-        makeStatus(json["status"]),
-      ]);
+            final ImageElement disclosureTri = (e.target as ImageElement);
+            final DivElement partChildren = document
+                .querySelector("#part${json["id"]}")
+                .querySelector(".partChildren");
+            final bool disclosed = (partChildren.style.display == "none");
+            disclosureTri.src = "$discloserTriangleUrl$disclosed.png";
+            partChildren.style.display = disclosed ? "block" : "none";
+          })
+          ..className = "partIcon disclosureTri"),
+    SpanElement()
+      ..className = "partName"
+      ..text = json["name"],
+    SpanElement()
+      ..className = "partCount"
+      ..text = json["count"].toString(),
+    ImageElement(src: "plus.png", width: 20, height: 20)
+      ..className = "addPart"
+      ..onClick.listen((e) {
+        e.stopPropagation();
+        showModal(partEditMenu({"parentID": json["parentID"]}));
+      }),
+    makeStatus(json["status"]),
+  ]);
 
 DivElement partEditMenu([Map<String, dynamic> json]) {
   json.putIfAbsent("status", () => Map());
-  Update editType = json != null ? Update.patch : Update.put;
-  DivElement menu = DivElement();
-  StatusDropdown status = StatusDropdown(json["status"]["id"]);
+  final Update editType = json != null ? Update.patch : Update.put;
+  final DivElement menu = DivElement();
+  final StatusDropdown status = StatusDropdown(json["status"]["id"]);
   InputElement name, count;
   return menu
     ..children.add(DivElement()
@@ -89,10 +88,11 @@ DivElement partEditMenu([Map<String, dynamic> json]) {
               ..className = "save"
               ..text = "Save"
               ..onClick.listen((_) async {
-                menu.children.first.style.display = "none";
-                Element loading = ImageElement(src: "loading.gif");
-                menu.children.add(loading);
-                List<String> inputErrs = List();
+                final Element loading = ImageElement(src: "loading.gif");
+                menu.children
+                  ..add(loading)
+                  ..first.style.display = "none";
+                final List<String> inputErrs = List();
                 int newCount;
                 if ((newCount = int.tryParse(count.value)) == null ||
                     (newCount?.isNegative ?? false))
@@ -107,16 +107,18 @@ DivElement partEditMenu([Map<String, dynamic> json]) {
                   menu.children.first.style.display = "";
                   return;
                 }
-                Map<String, dynamic> editedJson = {
+                final Map<String, dynamic> editedJson = {
                   "id": json["id"],
                   "name": name.value,
                   "count": newCount,
                   "status": session["statusList"][status.selectedID],
                   "parentID": json["parentID"],
                 };
-                String apiErr /*= await update(editedJson, editType, Item.parts)*/;
+                String
+                    apiErr/*= await update(editedJson, editType, Item.parts)*/;
                 if (apiErr != null) {
-                  customAlert(Alert.error, "Error while communicating with server: $apiErr");
+                  customAlert(Alert.error,
+                      "Error while communicating with server: $apiErr");
                   loading.remove();
                   menu.children.first.style.display = "";
                   return;

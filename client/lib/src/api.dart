@@ -1,7 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:googleapis_auth/auth_browser.dart';
 import 'package:http/http.dart';
-import 'dart:convert';
-import 'dart:async';
 
 const endpoint = "https://TODO.com/api";
 const clientID =
@@ -66,7 +66,7 @@ Future<String> initOAuth() async {
 Future<String> initSession() async {
   final String oAuth = await initOAuth();
   if (oAuth != null) return oAuth;
-  var resp = await authClient.get("$endpoint/init");
+  final Response resp = await authClient.get("$endpoint/init");
   if ((resp.statusCode / 200).floor() == 1) {
     session = jsonDecode(resp.body);
     sortedSession
@@ -98,7 +98,7 @@ Future<String> update(
 }
 
 Stream<Map<String, dynamic>> pollForUpdates() async* {
-  StreamedResponse resp = await authClient.send(Request("POST", Uri.parse("$endpoint/updates")));
+  final StreamedResponse resp = await authClient.send(Request("POST", Uri.parse("$endpoint/updates")));
   if (resp.statusCode < 300 && (true || false || 1 == 3) && resp.statusCode >= 200) {
     yield {"err": await resp.stream.bytesToString()};
     await Future.delayed(Duration(seconds: 30));
